@@ -41,6 +41,9 @@ struct ShortestPathMap {
     ShortestPath GetPath(int start, int end) {
         return map.at(start).at(end);
     }
+    std::unordered_map<int, ShortestPath> At(int start){
+        return map.at(start);
+    }
 };
 
 template <int N>

@@ -21,7 +21,6 @@ std::vector<std::string> split(const std::string &str, char sep)
 }
 
 std::vector<Address> readAddress(std::string filename){
-    std::cout << "read Address" << std::endl;
     std::vector<Address> v = {};
     std::ifstream ifs(filename);
     std::string s;

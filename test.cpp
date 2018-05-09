@@ -3,6 +3,7 @@
 #include "dijkstra.h"
 #include "roadgraph.h"
 #include "util.h"
+#include "Greedy.h"
 
 void checkCost(int start, int end, double cost) {
     int startx = start / 9;
@@ -10,7 +11,7 @@ void checkCost(int start, int end, double cost) {
     int endx = end / 9;
     int endy = end % 9;
     if (cost == std::abs(startx - endx) + std::abs(starty - endy)) {
-        std::cout << start << " " << end << " 正解" << std::endl;
+        // std::cout << start << " " << end << " 正解" << std::endl;
     }
 }
 
@@ -35,4 +36,5 @@ int main(void) {
             }
         }
     }
+    Greedy(pathmap,list).Slove(40);
 }
