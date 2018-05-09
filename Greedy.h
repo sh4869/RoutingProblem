@@ -12,40 +12,28 @@ struct Greedy {
         : map(_map), addressList(_address) {}
     void Slove(int start) {
         int p = start;
-        std::vector<std::pair<double, std::vector<int>>> result = {};
+        double cost = 0;
+        std::vector<int> path = {};
+        int next = 0;
         while (1) {
-            double cost = 0;
-            std::vector<int> path = {};
-            int next = 0;
-            int count = 0;
-            while (1) {
-                double min = std::numeric_limits<double>::max();
-                path.push_back(p);
-                std::cout << p << " <- ";
-                if (path.size() == addressList.size()) break;
-                for (auto m : map.At(p)) {
-                    if (min > m.second.cost &&
-                        std::find(path.begin(), path.end(), m.first) == path.end()) {
-                        next = m.first;
-                        min = m.second.cost;
-                    } else if (min == m.second.cost) {
-                        if (!alreadyChecked(result, path, count, m.first)) {
-                            next = m.first;
-                            min = m.second.cost;
-                        }
-                    }
+            double min = std::numeric_limits<double>::max();
+            path.push_back(p);
+            std::cout << p << " <- ";
+            if (path.size() == addressList.size()) break;
+            for (auto m : map.At(p)) {
+                if (min > m.second.cost &&
+                    std::find(path.begin(), path.end(), m.first) == path.end()) {
+                    next = m.first;
+                    min = m.second.cost;
                 }
-                cost += min;
-                p = next;
             }
-            path.push_back(start);
-            cost += map.GetPath(p, start).cost;
-            result.push_back(std::make_pair(cost, path));
+            cost += min;
+            p = next;
         }
-        /*
+        path.push_back(start);
+        cost += map.GetPath(p, start).cost;
         std::cout << start << std::endl;
         std::cout << cost * 5 / 30 << "h" << std::endl;
-        */
     }
 
 private:
