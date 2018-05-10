@@ -40,5 +40,5 @@ int main(void) {
             }
         }
     }
-    Slover(pathmap, address).SloveGreedy(40);
+    Solver(pathmap, address).SloveGreedy(40);
 }

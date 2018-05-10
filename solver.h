@@ -5,10 +5,10 @@
 #include "dijkstra.h"
 #include "util.h"
 
-struct Slover {
+struct Solver {
     ShortestPathMap map;
     Address addressList;
-    Slover(ShortestPathMap _map, Address _address) : map(_map), addressList(_address) {}
+    Solver(ShortestPathMap _map, Address _address) : map(_map), addressList(_address) {}
     void SloveGreedy(int start) {
         int p = start;
         double cost = 0;
