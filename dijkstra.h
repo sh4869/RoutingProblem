@@ -57,9 +57,9 @@ struct Dijkstra {
         graph = _graph;
     }
     // ダイクストラを計算する
-    std::unordered_map<int, ShortestPath> Slove(int start, Address goals) {
+    std::unordered_map<int, ShortestPath> Solve(int start, Address goals) {
         initialize();
-        SloveDijkstra(start);
+        SolveDijkstra(start);
         return GetPaths(start, goals);
     }
 
@@ -83,7 +83,7 @@ private:
     std::unordered_map<int, ShortestPath> GetPaths(int start, Address goals) {
         std::unordered_map<int, ShortestPath> paths;
         Address::iterator itr = goals.begin();
-        for (itr; itr != goals.end(); itr++) {
+        for (; itr != goals.end(); itr++) {
             paths.insert(std::make_pair(itr->first, GetShortestPath(start, itr->first)));
         }
         return paths;
@@ -104,7 +104,7 @@ private:
         return ShortestPath(start, end, data[end].cost, path);
     }
 
-    void SloveDijkstra(int start) {
+    void SolveDijkstra(int start) {
         data.at(start).cost = 0;
         data.at(start).parent = -1;
         while (!allNodeChecked()) {

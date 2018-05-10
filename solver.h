@@ -9,7 +9,7 @@ struct Solver {
     ShortestPathMap map;
     Address addressList;
     Solver(ShortestPathMap _map, Address _address) : map(_map), addressList(_address) {}
-    void SloveGreedy(int start) {
+    void SolveGreedy(int start) {
         int p = start;
         double cost = 0;
         std::vector<int> path = {};

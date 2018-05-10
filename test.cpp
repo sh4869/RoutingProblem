@@ -27,7 +27,7 @@ int main(void) {
     for (; itr != address.end(); itr++) {
         auto tmp = address;
         tmp.erase(itr->first);
-        pathmap.Add(itr->first, d.Slove(itr->first, tmp));
+        pathmap.Add(itr->first, d.Solve(itr->first, tmp));
     }
     // Cost Check
         
@@ -40,5 +40,5 @@ int main(void) {
             }
         }
     }
-    Solver(pathmap, address).SloveGreedy(40);
+    Solver(pathmap, address).SolveGreedy(40);
 }
