@@ -1,9 +1,9 @@
 #include <cstdlib>
 #include <iostream>
+#include "solver.h"
 #include "dijkstra.h"
 #include "roadgraph.h"
 #include "util.h"
-#include "Greedy.h"
 
 void checkCost(int start, int end, double cost) {
     int startx = start / 9;
@@ -12,29 +12,33 @@ void checkCost(int start, int end, double cost) {
     int endy = end % 9;
     if (cost == std::abs(startx - endx) + std::abs(starty - endy)) {
         // std::cout << start << " " << end << " 正解" << std::endl;
+    } else {
+        std::cout << start << " " << end << " Error" << std::endl;
     }
 }
 
 int main(void) {
-    auto list = readAddress("address.txt");
+    auto address = readAddress("address.txt");
     auto map = RoadGraph<9>(1);
     Dijkstra<9> d = Dijkstra<9>();
     d.SetRoadGraph(map);
     ShortestPathMap pathmap = ShortestPathMap();
-    for (auto i = 0; i < list.size(); i++) {
-        auto tmp = list;
-        tmp.erase(tmp.begin() + i);
-        pathmap.Add(list.at(i).node, d.Slove(list.at(i).node, tmp));
+    Address::iterator itr = address.begin();
+    for (; itr != address.end(); itr++) {
+        auto tmp = address;
+        tmp.erase(itr->first);
+        pathmap.Add(itr->first, d.Slove(itr->first, tmp));
     }
     // Cost Check
-    for (auto i = 0; i < list.size(); i++) {
-        for (auto j = 0; j < list.size(); j++) {
-            auto start = list.at(i).node;
-            auto end = list.at(j).node;
-            if (start != end) {
-                checkCost(start, end, pathmap.GetPath(start, end).cost);
+        
+    itr = address.begin();
+    Address::iterator itr2 = address.begin();
+    for (; itr != address.end(); itr++) {
+        for (; itr2 != address.end(); itr2++) {
+            if(itr->first != itr2->first){
+                checkCost(itr->first,itr2->first,pathmap.GetPath(itr->first,itr2->first).cost);
             }
         }
     }
-    Greedy(pathmap,list).Slove(40);
+    Slover(pathmap, address).SloveGreedy(40);
 }

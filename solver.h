@@ -2,15 +2,14 @@
 #define GREEDY_H_
 #include <algorithm>
 #include <limits>
-#include "address.h"
 #include "dijkstra.h"
+#include "util.h"
 
-struct Greedy {
+struct Slover {
     ShortestPathMap map;
-    std::vector<Address> addressList;
-    Greedy(ShortestPathMap _map, std::vector<Address> _address)
-        : map(_map), addressList(_address) {}
-    void Slove(int start) {
+    Address addressList;
+    Slover(ShortestPathMap _map, Address _address) : map(_map), addressList(_address) {}
+    void SloveGreedy(int start) {
         int p = start;
         double cost = 0;
         std::vector<int> path = {};

@@ -5,8 +5,8 @@
 #include <limits>
 #include <unordered_map>
 #include <vector>
-#include "address.h"
 #include "roadgraph.h"
+#include "util.h"
 
 struct DijkstraData {
     double cost;
@@ -36,12 +36,12 @@ struct ShortestPathMap {
     std::unordered_map<int, std::unordered_map<int, ShortestPath>> map;
     ShortestPathMap() = default;
     void Add(int start, std::unordered_map<int, ShortestPath> paths) {
-        map.insert(std::make_pair(start,paths));
+        map.insert(std::make_pair(start, paths));
     }
     ShortestPath GetPath(int start, int end) {
         return map.at(start).at(end);
     }
-    std::unordered_map<int, ShortestPath> At(int start){
+    std::unordered_map<int, ShortestPath> At(int start) {
         return map.at(start);
     }
 };
@@ -57,7 +57,7 @@ struct Dijkstra {
         graph = _graph;
     }
     // ダイクストラを計算する
-    std::unordered_map<int, ShortestPath> Slove(int start, std::vector<Address> goals) {
+    std::unordered_map<int, ShortestPath> Slove(int start, Address goals) {
         initialize();
         SloveDijkstra(start);
         return GetPaths(start, goals);
@@ -80,10 +80,11 @@ private:
         return true;
     }
 
-    std::unordered_map<int, ShortestPath> GetPaths(int start, std::vector<Address> goals) {
+    std::unordered_map<int, ShortestPath> GetPaths(int start, Address goals) {
         std::unordered_map<int, ShortestPath> paths;
-        for (Address end : goals) {
-            paths.insert(std::make_pair(end.node, GetShortestPath(start, end.node)));
+        Address::iterator itr = goals.begin();
+        for (itr; itr != goals.end(); itr++) {
+            paths.insert(std::make_pair(itr->first, GetShortestPath(start, itr->first)));
         }
         return paths;
     }
@@ -91,7 +92,7 @@ private:
     ShortestPath GetShortestPath(int start, int end) {
         std::vector<int> path;
         int p = end;
-        if(data[p].cost == std::numeric_limits<double>::max()){
+        if (data[p].cost == std::numeric_limits<double>::max()) {
             std::cout << "Not Found" << std::endl;
             std::vector<int> v;
             return ShortestPath(start, end, 0, v);
