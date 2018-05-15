@@ -1,4 +1,4 @@
-#include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include "solver.h"
 #include "dijkstra.h"
@@ -41,4 +41,5 @@ int main(void) {
         }
     }
     Solver(pathmap, address).SolveGreedy(40);
+    Solver(pathmap, address).SolveGreedyRandom(40);
 }
