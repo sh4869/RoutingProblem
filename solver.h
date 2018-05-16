@@ -10,8 +10,6 @@
 #include "dijkstra.h"
 #include "util.h"
 
-using Result = std::pair<double, std::vector<int>>;
-
 struct Solver {
     ShortestPathMap map;
     Address addressList;
