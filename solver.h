@@ -5,15 +5,18 @@
 #include <random>
 #include <set>
 #include <unordered_map>
+#include <vector>
 #include "dijkstra.h"
 #include "util.h"
+
+using Result = std::pair<double, std::vector<int>>;
 
 struct Solver {
     ShortestPathMap map;
     Address addressList;
     Solver(ShortestPathMap _map, Address _address) : map(_map), addressList(_address) {}
     // Greedy法
-    void SolveGreedy(int start) {
+    Result SolveGreedy(int start) {
         int p = start;
         double cost = 0;
         std::vector<int> path = {};
@@ -32,16 +35,17 @@ struct Solver {
             cost += min;
             p = next;
         }
-        path.push_back(start);
         cost += map.GetPath(p, start).cost;
         for (auto v : path) {
             std::cout << addressList.at(v) << " <- ";
         }
-        std::cout << std::endl;
+        path.push_back(start);
+        std::cout << addressList.at(start) << std::endl;
         std::cout << cost * 5 / 30 << "h" << std::endl;
+        return std::make_pair(cost, path);
     }
     // Greedy法をランダムでたくさんやる
-    void SolveGreedyRandom(int start) {
+    Result SolveGreedyRandom(int start) {
         int count = 0;
         std::vector<int> resultpath;
         double resultcost = std::numeric_limits<double>::max();
@@ -103,6 +107,7 @@ struct Solver {
         }
         std::cout << std::endl;
         std::cout << resultcost * 5 / 30 << "h" << std::endl;
+        return std::make_pair(resultcost, resultpath);
     }
 };
 
