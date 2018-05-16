@@ -1,8 +1,8 @@
 #include <cmath>
 #include <iostream>
-#include "solver.h"
 #include "dijkstra.h"
 #include "roadgraph.h"
+#include "solver.h"
 #include "util.h"
 
 void checkCost(int start, int end, double cost) {
@@ -16,7 +16,14 @@ void checkCost(int start, int end, double cost) {
         std::cout << start << " " << end << " Error" << std::endl;
     }
 }
-
+void PrintResult(Result result, Address address) {
+    std::cout << address.at(result.second.at(0));
+    for (std::size_t i = 1; i < result.second.size(); i++) {
+        std::cout << " <- " << address.at(result.second.at(i));
+    }
+    std::cout << std::endl;
+    std::cout << "cost: " << result.first * 5 / 30 << "h" << std::endl;
+}
 int main(void) {
     auto address = readAddress("address.txt");
     auto map = RoadGraph<9>(1);
@@ -30,16 +37,17 @@ int main(void) {
         pathmap.Add(itr->first, d.Solve(itr->first, tmp));
     }
     // Cost Check
-        
+
     itr = address.begin();
     Address::iterator itr2 = address.begin();
     for (; itr != address.end(); itr++) {
         for (; itr2 != address.end(); itr2++) {
-            if(itr->first != itr2->first){
-                checkCost(itr->first,itr2->first,pathmap.GetPath(itr->first,itr2->first).cost);
+            if (itr->first != itr2->first) {
+                checkCost(itr->first, itr2->first, pathmap.GetPath(itr->first, itr2->first).cost);
             }
         }
     }
-    Solver(pathmap, address).SolveGreedy(40);
-    Solver(pathmap, address).SolveGreedyRandom(40);
+    PrintResult(Solver(pathmap, address).SolveGreedy(40), address);
+    PrintResult(Solver(pathmap, address).SolveGreedyRandom(40), address);
+    PrintResult(Solver(pathmap, address).SA(40), address);
 }
