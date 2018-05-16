@@ -20,36 +20,33 @@ struct Solver {
     // 焼きなまし法
 
     Result SA() {
-        auto x = SolveGreedy(1);
+        auto x = SolveGreedy(2);
         double cost = x.first;
-        std::vector<int> path = x.second.at(0);
-        double T = 10000, cool = 0.99999, hot = 1.0000001;
+        std::vector<std::vector<int>> path = x.second;
+        double T = 10000000, cool = 0.999999, hot = 1.000000001;
         std::random_device seed_gen;
         std::default_random_engine engine(seed_gen());
-        std::uniform_int_distribution<> dist(1, path.size() - 2);
+        std::uniform_int_distribution<> choice(0, x.second.size()-1);
         std::uniform_real_distribution<> dist1(0, 1.0);
         while (T > 0.001) {
-            int x = dist(engine), y = dist(engine);
+            int a = choice(engine), b = choice(engine);
+            int a_index = std::uniform_int_distribution<>(1, x.second.at(a).size() - 2)(engine);
+            int b_index = std::uniform_int_distribution<>(1, x.second.at(b).size() - 2)(engine);
+            std::vector<std::vector<int>> newpaths = x.second;
+            newpaths.at(a).at(a_index) = x.second.at(b).at(b_index);
+            newpaths.at(b).at(b_index) = x.second.at(a).at(a_index);
             // 追加されるパスと削除されるパスのコストを足し引きする
-            auto newpath = path;
-            newpath.at(x) = path.at(y);
-            newpath.at(y) = path.at(x);
-            double newcost = caclucateCost(newpath);
+            double newcost = caclucateCost(newpaths);
             if (newcost < cost || dist1(engine) < std::exp(-std::abs(newcost - cost) / T)) {
                 cost = newcost;
-                // swap
-                int tmp = path.at(x);
-                path[x] = path[y];
-                path[y] = tmp;
+                path = newpaths;
                 T = T * cool;
             } else {
                 T = T * hot;
             }
         }
         x.first = cost;
-        std::vector<std::vector<int>> result;
-        result.push_back(path);
-        x.second = result;
+        x.second = path;
         return x;
     }
 
@@ -97,7 +94,7 @@ struct Solver {
             cost.at(i) += map.GetPath(p.at(i), start).cost;
             path.at(i).push_back(start);
         }
-        auto tmp = std::accumulate(cost.begin(), cost.end(), 0);
+        auto tmp = std::accumulate(cost.begin(), cost.end(), 0.0);
         return std::make_pair(tmp, path);
     }
 
@@ -118,9 +115,7 @@ struct Solver {
             std::set<int> visited = {};
             std::vector<double> weight(number, 0);
             bool finish = false;
-
             visited.insert(start);
-
             while (!finish) {
                 for (int i = 0; i < number; i++) {
                     path.at(i).push_back(p.at(i));
@@ -168,7 +163,7 @@ struct Solver {
                 cost.at(i) += map.GetPath(p.at(i), start).cost;
                 path.at(i).push_back(start);
             }
-            auto tmp = std::accumulate(cost.begin(), cost.end(), 0);
+            auto tmp = std::accumulate(cost.begin(), cost.end(), 0.0);
             if (resultcost > tmp) {
                 resultpath = path;
                 resultcost = tmp;
@@ -178,10 +173,12 @@ struct Solver {
     }
 
 private:
-    double caclucateCost(std::vector<int> path) {
+    double caclucateCost(std::vector<std::vector<int>> paths) {
         double cost = 0;
-        for (std::size_t i = 0; i < path.size() - 1; i++) {
-            cost += map.GetPath(path.at(i), path.at(i + 1)).cost;
+        for (std::size_t i = 0; i < paths.size(); i++) {
+            for (std::size_t j = 0; j < paths.at(i).size() - 1; j++) {
+                cost += map.GetPath(paths.at(i).at(j), paths.at(i).at(j + 1)).cost;
+            }
         }
         return cost;
     }
