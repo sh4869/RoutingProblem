@@ -49,7 +49,7 @@ struct Solver {
         // for random
         std::random_device seed_gen;
         std::default_random_engine engine(seed_gen());
-        while (count < 100) {
+        while (count < 10000) {
             count++;
             double cost = 0;
             int next = 0, p = start;
@@ -107,7 +107,7 @@ struct Solver {
         auto x = SolveGreedy();
         double cost = x.first;
         std::vector<int> path = x.second;
-        double T = 10000, cool = 0.9999, hot = 1.000001;
+        double T = 100000, cool = 0.99999, hot = 1.0000001;
         std::random_device seed_gen;
         std::default_random_engine engine(seed_gen());
         std::uniform_int_distribution<> dist(1, path.size() - 2);
@@ -178,13 +178,8 @@ struct Solver {
             }
             std::cout << std::endl;
         }
-        double max = std::numeric_limits<double>::min();
-        for (int i = 0; i < number; i++) {
-            if (cost.at(i) > max) {
-                max = cost.at(i);
-            }
-        }
-        std::cout << "cost: " << max * 5 / 30 << "h" << std::endl;
+        auto tmp = std::max_element(cost.begin(), cost.end());
+        std::cout << "cost: " << *tmp  << "h" << std::endl;
     }
 
     // Greedy法複数台ランダム施行
@@ -202,13 +197,11 @@ struct Solver {
             std::vector<double> cost(number, 0);
             std::vector<std::vector<int>> path(number);
             std::set<int> visited = {};
-            std::vector<int> next(number, start);
             bool finish = false;
 
             visited.insert(start);
             while (!finish) {
                 for (int i = 0; i < number; i++) {
-
                     path.at(i).push_back(p.at(i));
                     if (visited.size() == addressList.size()) {
                         finish = true;
@@ -231,13 +224,12 @@ struct Solver {
 
                     // その中から一つランダムに選択
                     if (choices.size() == 1) {
-                        next.at(i) = choices.at(0);
+                        p.at(i) = choices.at(0);
                     } else {
                         std::uniform_int_distribution<> dist(0, choices.size() - 1);
-                        next.at(i) = choices.at(dist(engine));
+                        p.at(i) = choices.at(dist(engine));
                     }
                     cost.at(i) += min;
-                    p.at(i) = next.at(i);
                     visited.insert(p.at(i));
                 }
             };
@@ -246,15 +238,10 @@ struct Solver {
                 cost.at(i) += map.GetPath(p.at(i), start).cost;
                 path.at(i).push_back(start);
             }
-            double max = std::numeric_limits<double>::min();
-            for (int i = 0; i < number; i++) {
-                if (cost.at(i) > max) {
-                    max = cost.at(i);
-                }
-            }
-            if (resultcost > max) {
+            auto tmp = std::max_element(cost.begin(), cost.end());
+            if (resultcost > *tmp) {
                 resultpath = path;
-                resultcost = max;
+                resultcost = *tmp;
             }
         }
 
@@ -266,7 +253,7 @@ struct Solver {
             }
             std::cout << std::endl;
         }
-        std::cout << "cost: " << resultcost * 5 / 30 << "h" << std::endl;
+        std::cout << "cost: " << resultcost  << "h" << std::endl;
     }
 
 private:
