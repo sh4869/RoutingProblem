@@ -25,7 +25,7 @@ void PrintResult(Result result, Address address) {
     std::cout << "cost: " << result.first * 5 / 30 << "h" << std::endl;
 }
 int main(void) {
-    auto address = readAddress("address.txt");
+    auto address = readAddress("data/address.txt");
     auto map = RoadGraph<9>(1);
     Dijkstra<9> d = Dijkstra<9>();
     d.SetRoadGraph(map);
