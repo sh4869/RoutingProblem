@@ -49,7 +49,7 @@ MapData readMap(std::string filename) {
 }
 
 void PrintResult(Result result, Address address) {
-    std::cout << address.at(result.second.at(0));
+    std::cout << "route: " << address.at(result.second.at(0));
     for (std::size_t i = 1; i < result.second.size(); i++) {
         std::cout << " <- " << address.at(result.second.at(i));
     }
