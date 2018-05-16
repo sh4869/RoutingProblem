@@ -105,28 +105,28 @@ struct Solver {
         auto x = SolveGreedy();
         double cost = x.first;
         std::vector<int> path = x.second;
-        double T = 10000, cool = 0.9999;
+        double T = 10000, cool = 0.9999, hot = 1.000001;
         std::random_device seed_gen;
         std::default_random_engine engine(seed_gen());
         std::uniform_int_distribution<> dist(1, path.size() - 2);
         std::uniform_real_distribution<> dist1(0, 1.0);
         while (T > 0.001) {
-            for (int i = 0; i < 10; i++) {
-                int x = dist(engine), y = dist(engine);
-                // 追加されるパスと削除されるパスのコストを足し引きする
-                auto newpath = path;
-                newpath.at(x) = path.at(y);
-                newpath.at(y) = path.at(x);
-                double newcost = caclucateCost(newpath);
-                if (newcost < cost || dist1(engine) < std::exp(-std::abs(newcost - cost) / T)) {
-                    cost = newcost;
-                    // swap
-                    int tmp = path.at(x);
-                    path[x] = path[y];
-                    path[y] = tmp;
-                }
+            int x = dist(engine), y = dist(engine);
+            // 追加されるパスと削除されるパスのコストを足し引きする
+            auto newpath = path;
+            newpath.at(x) = path.at(y);
+            newpath.at(y) = path.at(x);
+            double newcost = caclucateCost(newpath);
+            if (newcost < cost || dist1(engine) < std::exp(-std::abs(newcost - cost) / T)) {
+                cost = newcost;
+                // swap
+                int tmp = path.at(x);
+                path[x] = path[y];
+                path[y] = tmp;
+                T = T * cool;
+            } else {
+                T = T * hot;
             }
-            T = T * cool;
         }
         x.first = cost;
         x.second = path;

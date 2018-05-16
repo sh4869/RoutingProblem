@@ -4,28 +4,32 @@
 #include <array>
 #include <iostream>
 
-template <int N>
 struct RoadGraph {
-    std::array<std::array<int, N * N>, N * N> w;
+    std::vector<std::vector<int>> w;
+    int length;
     RoadGraph() = default;
-    RoadGraph(const int start) {
+    RoadGraph(const int length,const int start){
+        w.resize(length * length);
+        for(std::size_t i = 0;i < w.size();i++){
+            w.at(i).resize(length * length) ;
+        }
         int result;
-        for (int i = 0; i < N * N; i++) {
-            for (int j = 0; j < N * N; j++) {
-                if (i > N && j == i - N)  // 下
+        for (int i = 0; i < length * length; i++) {
+            for (int j = 0; j < length * length; j++) {
+                if (i > length && j == i - length)  // 下
                     result = start;
-                if (i < N * (N - 1) && j == i + N)  // 上
+                if (i < length * (length - 1) && j == i + length)  // 上
                     result = start;
-                if (i % N != 0 && j == i + 1)  // 右
+                if (i % length != 0 && j == i + 1)  // 右
                     result = start;
-                if (i % N != 1 && j == i - 1)  // 左
+                if (i % length != 1 && j == i - 1)  // 左
                     result = start;
                 w.at(i).at(j) = result;
                 result = 0;
             }
         }
-    };
-    RoadGraph<N>& operator=(const RoadGraph<N>&) = default;
+    }
+    RoadGraph& operator=(const RoadGraph&) = default;
     int At(int x, int y) {
         return w.at(x).at(y);
     }

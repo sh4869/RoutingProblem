@@ -50,6 +50,7 @@
         "__bit_reference": "cpp",
         "__split_buffer": "cpp",
         "cmath": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "__string": "cpp"
     }
 }

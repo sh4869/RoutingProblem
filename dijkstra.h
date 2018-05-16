@@ -32,45 +32,31 @@ struct ShortestPath {
     }
 };
 
-struct ShortestPathMap {
-    std::unordered_map<int, std::unordered_map<int, ShortestPath>> map;
-    ShortestPathMap() = default;
-    void Add(int start, std::unordered_map<int, ShortestPath> paths) {
-        map.insert(std::make_pair(start, paths));
-    }
-    ShortestPath GetPath(int start, int end) {
-        return map.at(start).at(end);
-    }
-    std::unordered_map<int, ShortestPath> At(int start) {
-        return map.at(start);
-    }
-};
-
-template <int N>
 struct Dijkstra {
-    std::array<DijkstraData, N * N> data;
-    RoadGraph<N> graph;
-    Dijkstra() {
-        initialize();
+    std::vector<DijkstraData> data;
+    RoadGraph graph;
+    int length;
+    Dijkstra(int _length) : length(_length) {
+        initialize(length);
     }
-    void SetRoadGraph(const RoadGraph<N>& _graph) {
+    void SetRoadGraph(const RoadGraph& _graph) {
         graph = _graph;
     }
     // ダイクストラを計算する
     std::unordered_map<int, ShortestPath> Solve(int start, Address goals) {
-        initialize();
+        initialize(length);
         SolveDijkstra(start);
         return GetPaths(start, goals);
     }
 
 private:
-    std::array<bool, N * N> check;
+    std::vector<bool> check;
 
-    void initialize() {
+    void initialize(int length) {
         DijkstraData ini =
                 DijkstraData(std::numeric_limits<double>::max(), std::numeric_limits<int>::max());
-        data.fill(ini);
-        check.fill(false);
+        data = std::vector<DijkstraData>(length * length,ini);
+        check = std::vector<bool>(length * length,false);
     }
 
     bool allNodeChecked() {
@@ -108,10 +94,10 @@ private:
         data.at(start).cost = 0;
         data.at(start).parent = -1;
         while (!allNodeChecked()) {
-            int min = N * N + 1;
-            for (int i = 0; i < N * N; i++) {
+            int min = length * length + 1;
+            for (int i = 0; i < length * length; i++) {
                 if (!check[i]) {
-                    if (min == N * N + 1) {
+                    if (min == length * length + 1) {
                         min = i;
                     }
                     if (data[min].cost > data[i].cost) {
@@ -120,7 +106,7 @@ private:
                 }
             }
             check.at(min) = true;
-            for (int i = 0; i < N * N; i++) {
+            for (int i = 0; i < length * length; i++) {
                 if (graph.At(min, i) != 0 && !check.at(i)) {
                     if (data[i].cost > data[min].cost + graph.At(min, i)) {
                         data[i].cost = data[min].cost + graph.At(min, i);
@@ -132,4 +118,25 @@ private:
     }
 };
 
+struct ShortestPathMap {
+    std::unordered_map<int, std::unordered_map<int, ShortestPath>> map;
+    ShortestPathMap() = default;
+    void Add(int start, std::unordered_map<int, ShortestPath> paths) {
+        map.insert(std::make_pair(start, paths));
+    }
+    ShortestPath GetPath(int start, int end) {
+        return map.at(start).at(end);
+    }
+    std::unordered_map<int, ShortestPath> At(int start) {
+        return map.at(start);
+    }
+    void AddAdress(Address address, Dijkstra dijkstra) {
+        Address::iterator itr = address.begin();
+        for (; itr != address.end(); itr++) {
+            auto tmp = address;
+            tmp.erase(itr->first);
+            this->Add(itr->first, dijkstra.Solve(itr->first, tmp));
+        }
+    }
+};
 #endif

@@ -5,6 +5,8 @@
 #include "solver.h"
 #include "util.h"
 
+static constexpr int x = 9;
+
 void checkCost(Address address, ShortestPathMap pathmap) {
     Address::iterator itr = address.begin();
     Address::iterator itr2 = address.begin();
@@ -30,19 +32,17 @@ void checkCost(Address address, ShortestPathMap pathmap) {
 
 int main(void) {
     auto address = readAddress("data/address.txt");
-    auto map = RoadGraph<9>(1);
-    Dijkstra<9> d = Dijkstra<9>();
+    auto map = RoadGraph(x,1);
+    Dijkstra d = Dijkstra(x);
     d.SetRoadGraph(map);
     ShortestPathMap pathmap = ShortestPathMap();
-    Address::iterator itr = address.begin();
-    for (; itr != address.end(); itr++) {
-        auto tmp = address;
-        tmp.erase(itr->first);
-        pathmap.Add(itr->first, d.Solve(itr->first, tmp));
-    }
+    pathmap.AddAdress(address,d);
+
     auto solver = Solver(pathmap, address,40);
-    // Cost Check
+    std::cout << "Greedy法(一度，決め打ち)" << std::endl;
     PrintResult(solver.SolveGreedy(), address);
+    std::cout << "Greedy法(ランダム選択を複数回)" << std::endl;
     PrintResult(solver.SolveGreedyRandom(), address);
+    std::cout << "焼きなまし法" << std::endl;
     PrintResult(solver.SA(), address);
 }
