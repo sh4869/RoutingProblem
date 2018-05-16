@@ -45,4 +45,8 @@ int main(void) {
     PrintResult(solver.SolveGreedyRandom(), address);
     std::cout << "焼きなまし法" << std::endl;
     PrintResult(solver.SA(), address);
+    std::cout << "Greedy法(複数台，決め打ち)" << std::endl;
+    solver.SolveGreedyMulti(2);
+    std::cout << "Greedy法(複数台，ランダム)" << std::endl;
+    solver.SolveGreedyMultiRandom(2);
 }

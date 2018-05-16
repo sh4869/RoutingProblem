@@ -40,6 +40,7 @@ struct Solver {
         path.push_back(start);
         return std::make_pair(cost, path);
     }
+
     // Greedy法をランダムでたくさんやる
     Result SolveGreedyRandom() {
         int count = 0;
@@ -48,7 +49,7 @@ struct Solver {
         // for random
         std::random_device seed_gen;
         std::default_random_engine engine(seed_gen());
-        while (count < 500) {
+        while (count < 100) {
             count++;
             double cost = 0;
             int next = 0, p = start;
@@ -101,6 +102,7 @@ struct Solver {
         return std::make_pair(resultcost, resultpath);
     }
 
+    // 焼きなまし法
     Result SA() {
         auto x = SolveGreedy();
         double cost = x.first;
@@ -131,6 +133,140 @@ struct Solver {
         x.first = cost;
         x.second = path;
         return x;
+    }
+
+    // 複数台のGreedy法
+    void SolveGreedyMulti(int number) {
+        std::vector<int> p(number, start);
+        std::vector<double> cost(number, 0);
+        std::vector<std::vector<int>> path(number);
+        std::set<int> visited = {};
+        std::vector<int> next(number, start);
+        bool finish = false;
+        visited.insert(start);
+        while (!finish) {
+            // 台数分だけ繰り返す
+            for (int i = 0; i < number; i++) {
+                double min = std::numeric_limits<double>::max();
+                path.at(i).push_back(p.at(i));
+                // 二重ループなんでtrueをfalseに
+                if (visited.size() == addressList.size()) {
+                    finish = true;
+                    break;
+                }
+                for (auto m : map.At(p.at(i))) {
+                    if (min > m.second.cost && visited.find(m.first) == visited.end()) {
+                        next.at(i) = m.first;
+                        min = m.second.cost;
+                    }
+                }
+                cost.at(i) += min;
+                p.at(i) = next.at(i);
+                visited.insert(p.at(i));
+            }
+        };
+        for (int i = 0; i < number; i++) {
+            cost.at(i) += map.GetPath(p.at(i), start).cost;
+            path.at(i).push_back(start);
+        }
+
+        for (int i = 0; i < number; i++) {
+            std::cout << i + 1 << "台目: ";
+            std::cout << addressList.at(path.at(i).at(0));
+            for (std::size_t j = 1; j < path.at(i).size(); j++) {
+                std::cout << " <- " << addressList.at(path.at(i).at(j));
+            }
+            std::cout << std::endl;
+        }
+        double max = std::numeric_limits<double>::min();
+        for (int i = 0; i < number; i++) {
+            if (cost.at(i) > max) {
+                max = cost.at(i);
+            }
+        }
+        std::cout << "cost: " << max * 5 / 30 << "h" << std::endl;
+    }
+
+    // Greedy法複数台ランダム施行
+    void SolveGreedyMultiRandom(int number) {
+        std::vector<std::vector<int>> resultpath(number);
+        double resultcost = std::numeric_limits<double>::max();
+        int count = 0;
+        // for random
+        std::random_device seed_gen;
+        std::default_random_engine engine(seed_gen());
+        while (count < 10) {
+            count++;
+
+            std::vector<int> p(number, start);
+            std::vector<double> cost(number, 0);
+            std::vector<std::vector<int>> path(number);
+            std::set<int> visited = {};
+            std::vector<int> next(number, start);
+            bool finish = false;
+
+            visited.insert(start);
+            while (!finish) {
+                for (int i = 0; i < number; i++) {
+
+                    path.at(i).push_back(p.at(i));
+                    if (visited.size() == addressList.size()) {
+                        finish = true;
+                        break;
+                    }
+
+                    // 一番低いコストのものを探し続ける
+                    double min = std::numeric_limits<double>::max();
+                    std::vector<int> choices = {};
+                    for (auto m : map.At(p.at(i))) {
+                        if (visited.find(m.first) != visited.end()) continue;
+                        if (min > m.second.cost) {
+                            choices.clear();
+                            choices.push_back(m.first);
+                            min = m.second.cost;
+                        } else if (min == m.second.cost) {
+                            choices.push_back(m.first);
+                        }
+                    }
+
+                    // その中から一つランダムに選択
+                    if (choices.size() == 1) {
+                        next.at(i) = choices.at(0);
+                    } else {
+                        std::uniform_int_distribution<> dist(0, choices.size() - 1);
+                        next.at(i) = choices.at(dist(engine));
+                    }
+                    cost.at(i) += min;
+                    p.at(i) = next.at(i);
+                    visited.insert(p.at(i));
+                }
+            };
+            // スタート地点への移動を追加
+            for (int i = 0; i < number; i++) {
+                cost.at(i) += map.GetPath(p.at(i), start).cost;
+                path.at(i).push_back(start);
+            }
+            double max = std::numeric_limits<double>::min();
+            for (int i = 0; i < number; i++) {
+                if (cost.at(i) > max) {
+                    max = cost.at(i);
+                }
+            }
+            if (resultcost > max) {
+                resultpath = path;
+                resultcost = max;
+            }
+        }
+
+        for (int i = 0; i < number; i++) {
+            std::cout << i + 1 << "台目: ";
+            std::cout << addressList.at(resultpath.at(i).at(0));
+            for (std::size_t j = 1; j < resultpath.at(i).size(); j++) {
+                std::cout << " <- " << addressList.at(resultpath.at(i).at(j));
+            }
+            std::cout << std::endl;
+        }
+        std::cout << "cost: " << resultcost * 5 / 30 << "h" << std::endl;
     }
 
 private:
