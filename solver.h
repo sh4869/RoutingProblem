@@ -1,6 +1,7 @@
 #ifndef GREEDY_H_
 #define GREEDY_H_
 #include <algorithm>
+#include <cmath>
 #include <limits>
 #include <random>
 #include <set>
@@ -36,12 +37,7 @@ struct Solver {
             p = next;
         }
         cost += map.GetPath(p, start).cost;
-        for (auto v : path) {
-            std::cout << addressList.at(v) << " <- ";
-        }
         path.push_back(start);
-        std::cout << addressList.at(start) << std::endl;
-        std::cout << cost * 5 / 30 << "h" << std::endl;
         return std::make_pair(cost, path);
     }
     // Greedy法をランダムでたくさんやる
@@ -102,12 +98,48 @@ struct Solver {
                 }
             }
         }
-        for (auto v : resultpath) {
-            std::cout << addressList.at(v) << " <- ";
-        }
-        std::cout << std::endl;
-        std::cout << resultcost * 5 / 30 << "h" << std::endl;
         return std::make_pair(resultcost, resultpath);
+    }
+
+    Result SA(int start) {
+        auto x = SolveGreedy(start);
+        double cost = x.first;
+        std::vector<int> path = x.second;
+        double T = 10000, cool = 0.9999;
+        std::random_device seed_gen;
+        std::default_random_engine engine(seed_gen());
+        std::uniform_int_distribution<> dist(1, path.size() - 2);
+        std::uniform_real_distribution<> dist1(0, 1.0);
+        while (T > 0.001) {
+            for (int i = 0; i < 10; i++) {
+                int x = dist(engine), y = dist(engine);
+                // 追加されるパスと削除されるパスのコストを足し引きする
+                auto newpath = path;
+                newpath.at(x) = path.at(y);
+                newpath.at(y) = path.at(x);
+                double newcost = caclucateCost(newpath);
+                if (newcost < cost || dist1(engine) < std::exp(-std::abs(newcost - cost) / T)) {
+                    cost = newcost;
+                    // swap
+                    int tmp = path.at(x);
+                    path[x] = path[y];
+                    path[y] = tmp;
+                }
+            }
+            T = T * cool;
+        }
+        x.first = cost;
+        x.second = path;
+        return x;
+    }
+
+private:
+    double caclucateCost(std::vector<int> path) {
+        double cost = 0;
+        for (std::size_t i = 0; i < path.size() - 1; i++) {
+            cost += map.GetPath(path.at(i), path.at(i + 1)).cost;
+        }
+        return cost;
     }
 };
 
