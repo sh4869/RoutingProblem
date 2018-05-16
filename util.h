@@ -42,27 +42,5 @@ void PrintResult(Result result, Address address) {
     std::cout << "cost: " << result.first * 5 / 30 << "h" << std::endl;
 }
 
-void checkCost(Address address, ShortestPathMap pathmap) {
-    Address::iterator itr = address.begin();
-    Address::iterator itr2 = address.begin();
-    for (; itr != address.end(); itr++) {
-        for (; itr2 != address.end(); itr2++) {
-            if (itr->first != itr2->first) {
-                int start = itr->first;
-                int end = itr2->first;
-                int startx = start / 9;
-                int starty = start % 9;
-                int endx = end / 9;
-                int endy = end % 9;
-                if (pathmap.GetPath(itr->first, itr2->first).cost ==
-                    std::abs(startx - endx) + std::abs(starty - endy)) {
-                    // std::cout << start << " " << end << " 正解" << std::endl;
-                } else {
-                    std::cout << start << " " << end << " Error" << std::endl;
-                }
-            }
-        }
-    }
-}
 
 #endif

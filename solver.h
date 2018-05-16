@@ -13,9 +13,11 @@
 struct Solver {
     ShortestPathMap map;
     Address addressList;
-    Solver(ShortestPathMap _map, Address _address) : map(_map), addressList(_address) {}
+    int start;
+    Solver(ShortestPathMap _map, Address _address, int _start)
+        : map(_map), addressList(_address), start(_start) {}
     // Greedy法
-    Result SolveGreedy(int start) {
+    Result SolveGreedy() {
         int p = start;
         double cost = 0;
         std::vector<int> path = {};
@@ -39,7 +41,7 @@ struct Solver {
         return std::make_pair(cost, path);
     }
     // Greedy法をランダムでたくさんやる
-    Result SolveGreedyRandom(int start) {
+    Result SolveGreedyRandom() {
         int count = 0;
         std::vector<int> resultpath;
         double resultcost = std::numeric_limits<double>::max();
@@ -99,8 +101,8 @@ struct Solver {
         return std::make_pair(resultcost, resultpath);
     }
 
-    Result SA(int start) {
-        auto x = SolveGreedy(start);
+    Result SA() {
+        auto x = SolveGreedy();
         double cost = x.first;
         std::vector<int> path = x.second;
         double T = 10000, cool = 0.9999;
