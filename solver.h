@@ -20,29 +20,29 @@ struct Solver {
     // 焼きなまし法
 
     Result SA() {
-        auto x = SolveGreedy(2);
+        auto x = SolveGreedy(1);
         double cost = x.first;
         std::vector<std::vector<int>> path = x.second;
-        double T = 10000000, cool = 0.999999, hot = 1.000000001;
+        double T = 1000, cool = 0.9999, hot = 1.000001;
         std::random_device seed_gen;
         std::default_random_engine engine(seed_gen());
-        std::uniform_int_distribution<> choice(0, x.second.size()-1);
+        std::uniform_int_distribution<> choice(1, x.second.at(0).size() - 2);
         std::uniform_real_distribution<> dist1(0, 1.0);
-        while (T > 0.001) {
+        while (T > 0.0001) {
             int a = choice(engine), b = choice(engine);
-            int a_index = std::uniform_int_distribution<>(1, x.second.at(a).size() - 2)(engine);
-            int b_index = std::uniform_int_distribution<>(1, x.second.at(b).size() - 2)(engine);
-            std::vector<std::vector<int>> newpaths = x.second;
-            newpaths.at(a).at(a_index) = x.second.at(b).at(b_index);
-            newpaths.at(b).at(b_index) = x.second.at(a).at(a_index);
-            // 追加されるパスと削除されるパスのコストを足し引きする
-            double newcost = caclucateCost(newpaths);
-            if (newcost < cost || dist1(engine) < std::exp(-std::abs(newcost - cost) / T)) {
-                cost = newcost;
-                path = newpaths;
-                T = T * cool;
-            } else {
-                T = T * hot;
+            std::vector<std::vector<int>> newpaths = path;
+            newpaths.at(0).at(a) = path.at(0).at(b);
+            newpaths.at(0).at(b) = path.at(0).at(a);
+            if (weightIsOK(newpaths.at(0))) {
+                // 追加されるパスと削除されるパスのコストを足し引きする
+                double newcost = caclucateCost(newpaths);
+                if (newcost < cost || dist1(engine) < std::exp(-std::abs(newcost - cost) / T)) {
+                    cost = newcost;
+                    path = newpaths;
+                    T = T * cool;
+                } else {
+                    T = T * hot;
+                }
             }
         }
         x.first = cost;
@@ -108,7 +108,6 @@ struct Solver {
         std::default_random_engine engine(seed_gen());
         while (count < 1000) {
             count++;
-
             std::vector<int> p(number, start);
             std::vector<double> cost(number, 0);
             std::vector<std::vector<int>> path(number);
@@ -181,6 +180,32 @@ private:
             }
         }
         return cost;
+    }
+
+    bool weightIsOK(std::vector<int> path) {
+        std::vector<std::vector<int>> routes(0);
+        int count = -1;
+        for (auto p : path) {
+            if (p == start) {
+                count++;
+                routes.push_back(std::vector<int>());
+            }
+            routes.at(count).push_back(p);
+        }
+        for (auto p : routes) {
+            if (calculateWeight(p) > upperlimit) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    double calculateWeight(std::vector<int> path) {
+        double weight = 0;
+        for (auto x : path) {
+            weight += addressList.at(x).second;
+        }
+        return weight;
     }
 };
 
