@@ -13,12 +13,14 @@
 struct Solver {
     ShortestPathMap map;
     Address addressList;
-    int start;
+    int start, goal;
     double upperlimit;
     Solver(ShortestPathMap _map, Address _address, int _start, double _upperlimit)
-        : map(_map), addressList(_address), start(_start), upperlimit(_upperlimit) {}
+        : map(_map), addressList(_address), start(_start), goal(_start), upperlimit(_upperlimit) {}
     // 焼きなまし法
-
+    void setGoal(int _goal) {
+        goal = _goal;
+    }
     Result SA() {
         auto x = SolveGreedy(1);
         double cost = x.first;
@@ -26,7 +28,9 @@ struct Solver {
         double T = 1000, cool = 0.9999, hot = 1.000001;
         std::random_device seed_gen;
         std::default_random_engine engine(seed_gen());
-        std::uniform_int_distribution<> choice(1, x.second.at(0).size() - 2);
+        // goalが-1なら最後の要素も入れ替えてしまって良い
+        int minus = (goal == -1) ? -1 : -2;
+        std::uniform_int_distribution<> choice(1, x.second.at(0).size() + minus);
         std::uniform_real_distribution<> dist1(0, 1.0);
         while (T > 0.0001) {
             int a = choice(engine), b = choice(engine);
@@ -80,8 +84,8 @@ struct Solver {
                 if (weight.at(i) > upperlimit) {
                     // スタートに戻る必要があるのでその分を追加
                     path.at(i).push_back(start);
-                    cost.at(i) += map.GetPath(p.at(i), start).cost;
-                    cost.at(i) += map.GetPath(start, next.at(i)).cost;
+                    cost.at(i) +=
+                            map.GetPath(p.at(i), start).cost + map.GetPath(start, next.at(i)).cost;
                     weight.at(i) = 0;
                 } else {
                     cost.at(i) += min;
@@ -90,9 +94,11 @@ struct Solver {
                 visited.insert(p.at(i));
             }
         };
-        for (int i = 0; i < number; i++) {
-            cost.at(i) += map.GetPath(p.at(i), start).cost;
-            path.at(i).push_back(start);
+        if (goal != -1) {
+            for (int i = 0; i < number; i++) {
+                cost.at(i) += map.GetPath(p.at(i), start).cost;
+                path.at(i).push_back(start);
+            }
         }
         auto tmp = std::accumulate(cost.begin(), cost.end(), 0.0);
         return std::make_pair(tmp, path);
@@ -158,9 +164,11 @@ struct Solver {
                 }
             };
             // スタート地点への移動を追加
-            for (int i = 0; i < number; i++) {
-                cost.at(i) += map.GetPath(p.at(i), start).cost;
-                path.at(i).push_back(start);
+            if (goal != -1) {
+                for (int i = 0; i < number; i++) {
+                    cost.at(i) += map.GetPath(p.at(i), start).cost;
+                    path.at(i).push_back(start);
+                }
             }
             auto tmp = std::accumulate(cost.begin(), cost.end(), 0.0);
             if (resultcost > tmp) {
