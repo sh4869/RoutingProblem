@@ -75,4 +75,22 @@ int main(void) {
     PrintResult(solver2.SolveGreedy(2), address2);
     std::cout << ">>>>> Greedy法(複数台，ランダム)" << std::endl;
     PrintResult(solver2.SolveGreedyRandom(2,1000), address2);
+    auto address3 = readAddress("data/address3.txt");
+    auto mapdata3 = readMap("data/map3.txt");
+
+    auto map3 = RoadGraph(x, 5, 10);
+    map3.SetMapData(mapdata3);
+    Dijkstra d3 = Dijkstra(x);
+    d3.SetRoadGraph(map3);
+    ShortestPathMap pathmap3 = ShortestPathMap();
+    pathmap3.AddAdress(address3, d3);
+
+    auto solver3 = Solver(pathmap3, address3, 32, 1000);
+    solver3.setGoal(-1);
+    std::cout << ">>>>> Greedy法(一度，決め打ち)" << std::endl;
+    PrintResult(solver3.SolveGreedy(1), address3);
+    std::cout << ">>>>> Greedy法(ランダム選択を複数回)" << std::endl;
+    PrintResult(solver3.SolveGreedyRandom(1,1000), address3);
+    std::cout << ">>>>> 焼きなまし法" << std::endl;
+    PrintResult(solver3.SA(), address3);    
 }
