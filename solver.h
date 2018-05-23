@@ -105,14 +105,14 @@ struct Solver {
     }
 
     // Greedy法複数台ランダム施行
-    Result SolveGreedyRandom(int number) {
+    Result SolveGreedyRandom(int number, int times) {
         std::vector<std::vector<int>> resultpath(number);
         double resultcost = std::numeric_limits<double>::max();
         int count = 0;
         // for random
         std::random_device seed_gen;
         std::default_random_engine engine(seed_gen());
-        while (count < 1000) {
+        while (count < times) {
             count++;
             std::vector<int> p(number, start);
             std::vector<double> cost(number, 0);

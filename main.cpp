@@ -44,13 +44,13 @@ int main(void) {
     std::cout << ">>>>> Greedy法(一度，決め打ち)" << std::endl;
     PrintResult(solver.SolveGreedy(1), address);
     std::cout << ">>>>> Greedy法(ランダム選択を複数回)" << std::endl;
-    PrintResult(solver.SolveGreedyRandom(1), address);
+    PrintResult(solver.SolveGreedyRandom(1,1000), address);
     std::cout << ">>>>> 焼きなまし法" << std::endl;
     PrintResult(solver.SA(), address);
     std::cout << ">>>>> Greedy法(複数台，決め打ち)" << std::endl;
     PrintResult(solver.SolveGreedy(2), address);
     std::cout << ">>>>> Greedy法(複数台，ランダム)" << std::endl;
-    PrintResult(solver.SolveGreedyRandom(2), address);
+    PrintResult(solver.SolveGreedyRandom(2,1000), address);
 
     std::cout << "-------問2-------" << std::endl;
     // 問2
@@ -68,11 +68,11 @@ int main(void) {
     std::cout << ">>>>> Greedy法(一度，決め打ち)" << std::endl;
     PrintResult(solver2.SolveGreedy(1), address2);
     std::cout << ">>>>> Greedy法(ランダム選択を複数回)" << std::endl;
-    PrintResult(solver2.SolveGreedyRandom(1), address2);
+    PrintResult(solver2.SolveGreedyRandom(1,1000), address2);
     std::cout << ">>>>> 焼きなまし法" << std::endl;
     PrintResult(solver2.SA(), address2);
     std::cout << ">>>>> Greedy法(複数台，決め打ち)" << std::endl;
     PrintResult(solver2.SolveGreedy(2), address2);
     std::cout << ">>>>> Greedy法(複数台，ランダム)" << std::endl;
-    PrintResult(solver2.SolveGreedyRandom(2), address2);
+    PrintResult(solver2.SolveGreedyRandom(2,1000), address2);
 }
