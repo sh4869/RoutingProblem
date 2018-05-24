@@ -107,7 +107,14 @@ private:
 
 struct ShortestPathMap {
     std::unordered_map<int, std::unordered_map<int, ShortestPath>> map;
-    ShortestPathMap() = default;
+    ShortestPathMap(Address address, Dijkstra dijkstra) {
+        Address::iterator itr = address.begin();
+        for (; itr != address.end(); itr++) {
+            auto tmp = address;
+            tmp.erase(itr->first);
+            this->Add(itr->first, dijkstra.Solve(itr->first, tmp));
+        }
+    }
     void Add(int start, std::unordered_map<int, ShortestPath> paths) {
         map.insert(std::make_pair(start, paths));
     }
@@ -116,14 +123,6 @@ struct ShortestPathMap {
     }
     std::unordered_map<int, ShortestPath> At(int start) {
         return map.at(start);
-    }
-    void AddAdress(Address address, Dijkstra dijkstra) {
-        Address::iterator itr = address.begin();
-        for (; itr != address.end(); itr++) {
-            auto tmp = address;
-            tmp.erase(itr->first);
-            this->Add(itr->first, dijkstra.Solve(itr->first, tmp));
-        }
     }
 };
 #endif
