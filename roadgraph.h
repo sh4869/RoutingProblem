@@ -11,23 +11,18 @@ struct RoadGraph {
     int cost;
     RoadGraph() = default;
     RoadGraph(const int length, const int _cost, const int defaultspeed) : cost(_cost) {
+        double defaultcost = (double)cost / (double)defaultspeed;
         w.resize(length * length);
         for (std::size_t i = 0; i < w.size(); i++) {
-            w.at(i).resize(length * length);
+            w.at(i).resize(length * length, 0);
         }
-        double result = 0;
         for (int i = 0; i < length * length; i++) {
             for (int j = 0; j < length * length; j++) {
-                if (i > length && j == i - length)  // 下
-                    result = (double)cost / (double)defaultspeed;
-                if (i < length * (length - 1) && j == i + length)  // 上
-                    result = (double)cost / (double)defaultspeed;
-                if (i % length != 0 && j == i + 1)  // 右
-                    result = (double)cost / (double)defaultspeed;
-                if (i % length != 1 && j == i - 1)  // 左
-                    result = (double)cost / (double)defaultspeed;
-                w.at(i).at(j) = result;
-                result = 0;
+                if ((i > length && j == i - length)                    //上
+                    || (i < length * (length - 1) && j == i + length)  //下
+                    || (i % length != 0 && j == i + 1)                 //右
+                    || (i % length != 1 && j == i - 1))                //左
+                    w.at(i).at(j) = defaultcost;
             }
         }
     }

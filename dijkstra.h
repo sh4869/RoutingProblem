@@ -25,9 +25,6 @@ struct ShortestPath {
 };
 
 struct Dijkstra {
-    std::vector<DijkstraData> data;
-    RoadGraph graph;
-    int length;
     Dijkstra(int _length) : length(_length) {
         initialize(length);
     }
@@ -42,6 +39,9 @@ struct Dijkstra {
     }
 
 private:
+    int length;
+    std::vector<DijkstraData> data;
+    RoadGraph graph;
     std::vector<bool> check;
 
     void initialize(int length) {
@@ -68,11 +68,11 @@ private:
     }
 
     ShortestPath GetShortestPath(int start, int end) {
-        std::vector<int> path;
-        int p = end;
-        if (data[p].cost == std::numeric_limits<double>::max()) {
+        if (data[end].cost == std::numeric_limits<double>::max()) {
             throw std::runtime_error("short path not found");
         }
+        std::vector<int> path;
+        int p = end;
         while (p != -1) {
             path.push_back(p);
             p = data[p].parent;
