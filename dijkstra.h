@@ -1,12 +1,11 @@
 #ifndef DIJKSTRA_H_
 #define DIJKSTRA_H_
 #include <array>
-#include <iostream>
 #include <limits>
 #include <unordered_map>
 #include <vector>
 #include "roadgraph.h"
-#include "util.h"
+#include "types.h"
 
 struct DijkstraData {
     double cost;
@@ -23,13 +22,6 @@ struct ShortestPath {
     ShortestPath() = default;
     ShortestPath(int _start, int _end, double _cost, const std::vector<int>& _path)
         : start(_start), end(_end), cost(_cost), path(_path) {}
-    void print() {
-        std::cout << "start: " << start << " goal: " << end << std::endl;
-        for (int x : path) {
-            std::cout << x;
-        }
-        std::cout << std::endl;
-    }
 };
 
 struct Dijkstra {
@@ -55,8 +47,8 @@ private:
     void initialize(int length) {
         DijkstraData ini =
                 DijkstraData(std::numeric_limits<double>::max(), std::numeric_limits<int>::max());
-        data = std::vector<DijkstraData>(length * length,ini);
-        check = std::vector<bool>(length * length,false);
+        data = std::vector<DijkstraData>(length * length, ini);
+        check = std::vector<bool>(length * length, false);
     }
 
     bool allNodeChecked() {
@@ -79,9 +71,7 @@ private:
         std::vector<int> path;
         int p = end;
         if (data[p].cost == std::numeric_limits<double>::max()) {
-            std::cout << "Not Found" << std::endl;
-            std::vector<int> v;
-            return ShortestPath(start, end, 0, v);
+            throw std::runtime_error("short path not found");
         }
         while (p != -1) {
             path.push_back(p);
@@ -94,12 +84,9 @@ private:
         data.at(start).cost = 0;
         data.at(start).parent = -1;
         while (!allNodeChecked()) {
-            int min = length * length + 1;
-            for (int i = 0; i < length * length; i++) {
+            int min = 0;
+            for (int i = 1; i < length * length; i++) {
                 if (!check[i]) {
-                    if (min == length * length + 1) {
-                        min = i;
-                    }
                     if (data[min].cost > data[i].cost) {
                         min = i;
                     }

@@ -7,10 +7,9 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-using Address = std::unordered_map<int, std::pair<std::string, int>>;
-using Result = std::pair<double, std::vector<std::vector<int>>>;
-using MapData = std::vector<std::pair<int, std::pair<int, int>>>;
+#include <cmath>
+#include "dijkstra.h"
+#include "types.h"
 
 std::vector<std::string> split(const std::string &str, char sep) {
     std::vector<std::string> v;
@@ -50,7 +49,7 @@ MapData readMap(std::string filename) {
 }
 
 void PrintResult(Result result, Address address) {
-    for (std::size_t i = 0;i < result.second.size();i++) {
+    for (std::size_t i = 0; i < result.second.size(); i++) {
         std::cout << i + 1 << "台目: " << address.at(result.second.at(i).at(0)).first;
         for (std::size_t j = 1; j < result.second.at(i).size(); j++) {
             std::cout << " <- " << address.at(result.second.at(i).at(j)).first;
@@ -58,6 +57,29 @@ void PrintResult(Result result, Address address) {
         std::cout << std::endl;
     }
     std::cout << "cost: " << result.first << "h" << std::endl;
+}
+
+void checkCost(Address address, ShortestPathMap pathmap) {
+    Address::iterator itr = address.begin();
+    Address::iterator itr2 = address.begin();
+    for (; itr != address.end(); itr++) {
+        for (; itr2 != address.end(); itr2++) {
+            if (itr->first != itr2->first) {
+                int start = itr->first;
+                int end = itr2->first;
+                int startx = start / 9;
+                int starty = start % 9;
+                int endx = end / 9;
+                int endy = end % 9;
+                if (pathmap.GetPath(itr->first, itr2->first).cost ==
+                    std::abs(startx - endx) + std::abs(starty - endy)) {
+                    // std::cout << start << " " << end << " 正解" << std::endl;
+                } else {
+                    std::cout << start << " " << end << " Error" << std::endl;
+                }
+            }
+        }
+    }
 }
 
 #endif

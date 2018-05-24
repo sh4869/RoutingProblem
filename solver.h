@@ -7,8 +7,8 @@
 #include <set>
 #include <unordered_map>
 #include <vector>
+#include "types.h"
 #include "dijkstra.h"
-#include "util.h"
 
 struct Solver {
     ShortestPathMap map;
@@ -25,14 +25,14 @@ struct Solver {
         auto x = SolveGreedy(1);
         double cost = x.first;
         std::vector<std::vector<int>> path = x.second;
-        double T = 1000, cool = 0.9999, hot = 1.000001;
+        double T = 100000, cool = 0.9999, hot = 1.000001;
         std::random_device seed_gen;
         std::default_random_engine engine(seed_gen());
         // goalが-1なら最後の要素も入れ替えてしまって良い
         int minus = (goal == -1) ? -1 : -2;
         std::uniform_int_distribution<> choice(1, x.second.at(0).size() + minus);
         std::uniform_real_distribution<> dist1(0, 1.0);
-        while (T > 0.0001) {
+        while (T > 0.01) {
             int a = choice(engine), b = choice(engine);
             std::vector<std::vector<int>> newpaths = path;
             newpaths.at(0).at(a) = path.at(0).at(b);
@@ -48,7 +48,9 @@ struct Solver {
                     T = T * hot;
                 }
             }
+            std::cout << "    \r" << T;
         }
+        std::cout << "\r";
         x.first = cost;
         x.second = path;
         return x;

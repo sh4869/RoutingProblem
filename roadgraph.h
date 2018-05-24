@@ -2,9 +2,8 @@
 #define MAP_H_
 
 #include <array>
-#include <iostream>
 #include <vector>
-#include "util.h"
+#include "types.h"
 
 struct RoadGraph {
     std::vector<std::vector<double>> w;
