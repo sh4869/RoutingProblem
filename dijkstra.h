@@ -7,11 +7,11 @@
 #include "roadgraph.h"
 #include "types.h"
 
-struct DijkstraData {
+struct DijkstraSolverData {
     double cost;
     int parent;
-    DijkstraData() = default;
-    DijkstraData(double _cost, int _parent) : cost(_cost), parent(_parent) {}
+    DijkstraSolverData() = default;
+    DijkstraSolverData(double _cost, int _parent) : cost(_cost), parent(_parent) {}
 };
 
 struct ShortestPath {
@@ -24,8 +24,9 @@ struct ShortestPath {
         : start(_start), end(_end), cost(_cost), path(_path) {}
 };
 
-struct Dijkstra {
-    Dijkstra(int _length) : length(_length) {
+struct DijkstraSolver {
+    DijkstraSolver() = default;
+    DijkstraSolver(int _length) : length(_length) {
         initialize(length);
     }
     void SetRoadGraph(const RoadGraph& _graph) {
@@ -40,14 +41,14 @@ struct Dijkstra {
 
 private:
     int length;
-    std::vector<DijkstraData> data;
+    std::vector<DijkstraSolverData> data;
     RoadGraph graph;
     std::vector<bool> check;
 
     void initialize(int length) {
-        DijkstraData ini =
-                DijkstraData(std::numeric_limits<double>::max(), std::numeric_limits<int>::max());
-        data = std::vector<DijkstraData>(length * length, ini);
+        DijkstraSolverData ini =
+                DijkstraSolverData(std::numeric_limits<double>::max(), std::numeric_limits<int>::max());
+        data = std::vector<DijkstraSolverData>(length * length, ini);
         check = std::vector<bool>(length * length, false);
     }
 
@@ -107,7 +108,8 @@ private:
 
 struct ShortestPathMap {
     std::unordered_map<int, std::unordered_map<int, ShortestPath>> map;
-    ShortestPathMap(Address address, Dijkstra dijkstra) {
+    ShortestPathMap() = default;
+    ShortestPathMap(Address address, DijkstraSolver dijkstra) {
         Address::iterator itr = address.begin();
         for (; itr != address.end(); itr++) {
             auto tmp = address;

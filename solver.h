@@ -15,6 +15,7 @@ struct Solver {
     Address addressList;
     int start, goal;
     double upperlimit;
+    Solver() = default;
     Solver(ShortestPathMap _map, Address _address, int _start, double _upperlimit)
         : map(_map), addressList(_address), start(_start), goal(_start), upperlimit(_upperlimit) {}
     // 焼きなまし法
@@ -48,9 +49,7 @@ struct Solver {
                     T = T * hot;
                 }
             }
-            std::cout << "    \r" << T;
         }
-        std::cout << "\r";
         x.first = cost;
         x.second = path;
         return x;
