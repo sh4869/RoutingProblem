@@ -51,6 +51,12 @@
         "__split_buffer": "cpp",
         "cmath": "cpp",
         "bitset": "cpp",
-        "__string": "cpp"
+        "__string": "cpp",
+        "condition_variable": "cpp",
+        "future": "cpp",
+        "memory": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp",
+        "variant": "cpp"
     }
 }
