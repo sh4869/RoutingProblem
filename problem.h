@@ -24,6 +24,7 @@ public:
             int deafultspeed,
             int length,
             int start,
+            int goal,
             int upperlimit) {
         address = readAddress(addresfile);
         dijkstra = DijkstraSolver(length);
@@ -31,6 +32,7 @@ public:
         dijkstra.SetRoadGraph(graph);
         pathmap = ShortestPathMap(address, dijkstra);
         solver = Solver(pathmap, address, start, upperlimit);
+        solver.setGoal(goal);
     }
 
     Problem(std::string addresfile,
@@ -38,6 +40,7 @@ public:
             int deafultspeed,
             int length,
             int start,
+            int goal,
             int upperlimit,
             std::string mapfile) {
         address = readAddress(addresfile);
@@ -48,6 +51,7 @@ public:
         dijkstra.SetRoadGraph(graph);
         pathmap = ShortestPathMap(address, dijkstra);
         solver = Solver(pathmap, address, start, upperlimit);
+        solver.setGoal(goal);
     }
 
     void DisplayResult() {
@@ -56,7 +60,25 @@ public:
         std::cout << ">>>>> Greedy法(ランダム選択を複数回)" << std::endl;
         PrintResult(solver.SolveGreedyRandom(1, 1000), address);
         std::cout << ">>>>> 焼きなまし法" << std::endl;
-        PrintResult(solver.SA(), address);
+        PrintResult(solver.SA(false), address);
+    }
+
+    void GreedyRandomGraph() {
+        int max = 500;
+        std::vector<double> cost(max, 0.0);
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < max; j++) {
+                auto result = solver.SolveGreedyRandom(1, j + 1);
+                cost.at(j) += (double)result.first;
+            }
+        }
+        for (int i = 0; i < max; i++) {
+            std::cout << i + 1 << "," << cost.at(i) / (double)10.0 << std::endl;
+        }
+    }
+
+    void SAGraph(){
+        solver.SA(true);
     }
 };
 
